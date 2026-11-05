@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduTech Portal - AngularJS SPA Routing</title>
+  
+  <!-- AngularJS Core & Route Scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background-color: #1e3a8a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo {
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: #bfdbfe;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover {
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .content-area {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      min-height: 400px;
+    }
+
+    .page-title {
+      color: #1e3a8a;
+      margin-bottom: 12px;
+    }
+
+    /* Course Cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 15px;
+      background: #fafafa;
+    }
+
+    .card h4 {
+      color: #2563eb;
+      margin-bottom: 6px;
+    }
+
+    /* Video Embed */
+    .video-container {
+      margin-top: 20px;
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Form */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 450px;
+      margin-top: 15px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .contact-form button {
+      padding: 8px;
+      background-color: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body ng-app="portalApp">
+
+  <!-- Main Single Page Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">EduPortal</div>
+    <div class="nav-links">
+      <a href="#!/">Home</a>
+      <a href="#!courses">Courses</a>
+      <a href="#!media">Media</a>
+      <a href="#!contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Routed View Container (ng-view) -->
+  <main class="content-area">
+    <div ng-view></div>
+  </main>
+
+  <footer>
+    &copy; 2026 EduPortal Technologies. All Rights Reserved.
+  </footer>
+
+  <script>
+    var app = angular.module("portalApp", ["ngRoute"]);
+
+    // Configure Routes
+    app.config(function($routeProvider) {
+      $routeProvider
+        .when("/", {
+          templateUrl: "home.html",
+          controller: "HomeController"
+        })
+        .when("/courses", {
+          templateUrl: "courses.html",
+          controller: "CoursesController"
+        })
+        .when("/media", {
+          templateUrl: "media.html",
+          controller: "MediaController"
+        })
+        .when("/contact", {
+          templateUrl: "contact.html",
+          controller: "ContactController"
+        })
+        .otherwise({
+          redirectTo: "/"
+        });
+    });
+
+    // Populate $templateCache so all 4 pages run seamlessly inside index.html
+    app.run(function($templateCache) {
+      // 1. Home View
+      $templateCache.put("home.html", `
+        <h2 class="page-title">Welcome to EduPortal</h2>
+        <p>Your premier destination for learning modern web development architectures, client-side routing, and MVC design patterns.</p>
+        <div style="margin-top: 20px; padding: 15px; background: #eff6ff; border-left: 4px solid #2563eb;">
+          <strong>Single Page Routing Active:</strong> Navigation links swap templates inside <code>&lt;div ng-view&gt;</code> without requiring full browser refreshes.
+        </div>
+      `);
+
+      // 2. Courses View
+      $templateCache.put("courses.html", `
+        <h2 class="page-title">Available Courses</h2>
+        <p>Explore our current interactive modules:</p>
+        <div class="cards-grid">
+          <div class="card" ng-repeat="course in courses">
+            <h4>{{ course.title }}</h4>
+            <p>{{ course.desc }}</p>
+            <small style="color: #059669; font-weight: bold;">Duration: {{ course.duration }}</small>
+          </div>
+        </div>
+      `);
+
+      // 3. Media View
+      $templateCache.put("media.html", `
+        <h2 class="page-title">Media & Tutorials</h2>
+        <p>Watch our introduction on AngularJS Single Page Application (SPA) architecture:</p>
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/OPxeCiy0RdY" allowfullscreen></iframe>
+        </div>
+      `);
+
+      // 4. Contact View
+      $templateCache.put("contact.html", `
+        <h2 class="page-title">Contact Us</h2>
+        <p>Send an inquiry to our training coordinators:</p>
+        <form class="contact-form" ng-submit="sendMessage()">
+          <input type="text" ng-model="contact.name" placeholder="Your Name" required>
+          <input type="email" ng-model="contact.email" placeholder="Your Email" required>
+          <textarea rows="4" ng-model="contact.message" placeholder="Message..." required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+      `);
+    });
+
+    // Controllers
+    app.controller("HomeController", function($scope) {});
+
+    app.controller("CoursesController", function($scope) {
+      $scope.courses = [
+        { title: "AngularJS Fundamentals", desc: "Two-way data binding, built-in directives, and scopes.", duration: "4 Weeks" },
+        { title: "SPA Routing with ngRoute", desc: "Dynamic route configurations and deep-linking.", duration: "2 Weeks" },
+        { title: "Modern CSS3 & Animations", desc: "Multi-column layouts, transitions, and flexible boxes.", duration: "3 Weeks" }
+      ];
+    });
+
+    app.controller("MediaController", function($scope) {});
+
+    app.controller("ContactController", function($scope) {
+      $scope.contact = {};
+      $scope.sendMessage = function() {
+        alert("Thank you, " + $scope.contact.name + "! Your message has been sent.");
+        $scope.contact = {};
+      };
+    });
+  </script>
+</body>
+</html>

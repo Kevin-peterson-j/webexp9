@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration Form</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f7fafc;
+    }
+
+    .form-container {
+      width: 650px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 25px 35px;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 6px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #1e3a8a;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      width: 140px;
+      font-weight: 500;
+      color: #1d4ed8;
+      font-size: 14px;
+    }
+
+    .asterisk {
+      color: #ef4444;
+    }
+
+    .form-input-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    input[type="email"],
+    select {
+      width: 220px;
+      padding: 6px 8px;
+      border: 1px solid #9ca3af;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    input.ng-touched.ng-invalid,
+    select.ng-touched.ng-invalid {
+      border-color: #ef4444;
+      background-color: #fff5f5;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      font-size: 14px;
+      color: #1d4ed8;
+    }
+
+    .error-msg {
+      color: #dc2626;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .btn-submit {
+      margin-top: 15px;
+      padding: 8px 24px;
+      font-size: 14px;
+      font-weight: bold;
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-submit:disabled {
+      background-color: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body ng-app="validationApp" ng-controller="FormController">
+
+  <div class="form-container">
+    <h2>User Registration Form</h2>
+
+    <form name="regForm" novalidate ng-submit="submitForm()">
+
+      <!-- Name Field -->
+      <div class="form-row">
+        <label class="form-label">Name<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <input type="text" name="uName" ng-model="user.name" ng-pattern="/^[a-zA-Z\s]+$/" required>
+          <span class="error-msg" ng-show="regForm.uName.$touched && regForm.uName.$error.required">Name is required</span>
+          <span class="error-msg" ng-show="regForm.uName.$dirty && regForm.uName.$error.pattern">Name should not contain numbers</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-row">
+        <label class="form-label">Password<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <input type="password" name="uPass" ng-model="user.password" ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/" required>
+          <span class="error-msg" ng-show="regForm.uPass.$touched && regForm.uPass.$error.required">Password is required</span>
+          <span class="error-msg" ng-show="regForm.uPass.$dirty && regForm.uPass.$error.pattern">Must have 1 upper, 1 lower, 1 digit, &amp; min 8 chars</span>
+        </div>
+      </div>
+
+      <!-- Age Field -->
+      <div class="form-row">
+        <label class="form-label">Age<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <input type="number" name="uAge" ng-model="user.age" min="18" max="30" required>
+          <span class="error-msg" ng-show="regForm.uAge.$touched && regForm.uAge.$error.required">Age is required</span>
+          <span class="error-msg" ng-show="regForm.uAge.$dirty && (regForm.uAge.$error.min || regForm.uAge.$error.max)">Age must be between 18 and 30</span>
+        </div>
+      </div>
+
+      <!-- Mobile Number Field -->
+      <div class="form-row">
+        <label class="form-label">Mobile Number<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <input type="text" name="uMobile" ng-model="user.mobile" ng-pattern="/^[0-9]{10}$/" required>
+          <span class="error-msg" ng-show="regForm.uMobile.$touched && regForm.uMobile.$error.required">Mobile number is required</span>
+          <span class="error-msg" ng-show="regForm.uMobile.$dirty && regForm.uMobile.$error.pattern">Must be exactly 10 digits</span>
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-row">
+        <label class="form-label">Email<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <input type="email" name="uEmail" ng-model="user.email" required>
+          <span class="error-msg" ng-show="regForm.uEmail.$touched && regForm.uEmail.$error.required">Email is required</span>
+          <span class="error-msg" ng-show="regForm.uEmail.$dirty && regForm.uEmail.$error.email">Invalid email format</span>
+        </div>
+      </div>
+
+      <!-- Gender Field -->
+      <div class="form-row">
+        <label class="form-label">Gender<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <div class="radio-group">
+            <label><input type="radio" name="uGender" value="Male" ng-model="user.gender" required> Male</label>
+            <label><input type="radio" name="uGender" value="Female" ng-model="user.gender" required> Female</label>
+          </div>
+          <span class="error-msg" ng-show="regForm.uGender.$touched && regForm.uGender.$error.required">Gender is required</span>
+        </div>
+      </div>
+
+      <!-- State Field -->
+      <div class="form-row">
+        <label class="form-label">State<span class="asterisk">*</span></label>
+        <div class="form-input-container">
+          <select name="uState" ng-model="user.state" required>
+            <option value="">-- Select State --</option>
+            <option value="Tamilnadu">Tamilnadu</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+          </select>
+          <span class="error-msg" ng-show="regForm.uState.$touched && regForm.uState.$error.required">Please select a state</span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div style="text-align: center;">
+        <button type="submit" class="btn-submit" ng-disabled="regForm.$invalid">Submit</button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    angular.module("validationApp", [])
+      .controller("FormController", function($scope) {
+        $scope.user = {};
+
+        $scope.submitForm = function() {
+          if ($scope.regForm.$valid) {
+            alert("Form submitted successfully!\n\nName: " + $scope.user.name + "\nEmail: " + $scope.user.email);
+          }
+        };
+      });
+  </script>
+</body>
+</html>
